@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Random Dummy User Generato - Hammed Olajide</title>
+        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+        <script src="https://unpkg.com/@babel/standalone@7.10.3/babel.min.js" crossorigin></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+
+    <body>
+        <div id="root"></div>
+
+        <script type="text/babel" data-presets="react,stage-3">
+            const delay = 1
+            const RandomUserGenerator = () => {
+                const [user, setUser] = React.useState(null)
+
+                const fetchData = async () => {
+                    await fetch("https://randomuser.me/api/")
+                        .then((response) => response.json())
+                        .then((res) => setUser(res?.results[0]))
+                }
+
+                React.useEffect(
+                    () => {
+                        let timer = setTimeout(() => fetchData(), delay * 1000);
+                        return () => {
+                            clearTimeout(timer);
+                        };
+                    }, [user]
+                );
+
+                return (
+                    <div className="p-8 bg-white h-screen">
+                        {user && <section className=" w-full max-w-screen-sm mx-auto">
+                            <table className="table-auto border bg-gray-100 w-full">
+                                <tbody>
+                                    <tr>
+                                        <td className="p-4 w-full" colSpan={6}>
+                                            <img alt='' src={user?.picture?.large} className="h-28 w-28 rounded-full border-2 border-white mx-auto" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className="p-4 uppercase">Name</td>
+                                        <td className="p-4">{user.name.title} {`${user?.name.first} ${user?.name.last}`}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="p-4 uppercase">Email</td>
+                                        <td className="p-4">{user.email}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="p-4 uppercase">gender</td>
+                                        <td className="p-4 capitalize">{user.gender}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="p-4 uppercase">Phone</td>
+                                        <td className="p-4">{user.phone}</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="p-4 uppercase">Date Of Birth</td>
+                                        <td className="p-4">{new Date(user.dob.date).toLocaleDateString()}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div className="p-8 text-center text-xs">
+                                Refresh Timeout is <strong>{delay}</strong> seconds.
+                            </div>
+                        </section>}
+                    </div>
+                );
+            }
+
+            const root = ReactDOM.createRoot(document.getElementById("root"))
+            root.render(<RandomUserGenerator />);
+        </script>
+    </body>
+
+</html>
